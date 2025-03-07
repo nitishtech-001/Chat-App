@@ -36,15 +36,38 @@ export const signup = async (req, res, next) => {
   }
 };
 
-export const login = (req, res, next) => {
-  console.log("Listening the login getRequest....");
-  res.status(200).json({
-    message: "you get the login credential",
-  });
+export const login = async (req, res, next) => {
+  const {username,email,password} = req.body;
+  try{
+    if(!username && !email){
+      return next(error(401,"Username or Email is required!"));
+    }else if(!password){
+      return next(error(401,"Password is required!"));
+    }
+    const user = await User.findOne({$or:[{email:email},{username:username}]});
+    if(!user){
+      return next(error(401,"Invalid Credential!"));
+    }
+    const validPass = await bcrypt.compare(password,user.password);
+
+    if(!validPass){
+      return next(error(401,"Invalid Credential!"));
+    }
+    generateToken(user._id,res);
+
+    res.status(200).json({
+      _id : user._id,
+      username : user.username,
+      email : user.email,
+      avatar : user.avatar,
+    })
+  }catch(error){
+    console.log("Error : "+error.message);
+    next(error);
+  }
+
+
+
 };
-export const logout = (req, res, next) => {
-  console.log("Listening the logout getRequest....");
-  res.status(200).json({
-    message: "you get the logout credential",
-  });
-};
+
+
