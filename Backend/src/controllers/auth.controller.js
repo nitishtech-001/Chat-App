@@ -1,19 +1,21 @@
 import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import error from "../middleware/errorHandler.js";
+
 
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
   try {
     if(!username || !email || !password){
-        return res.status(400).json({message : "All fields are required!"});
+        return next(error(400,"All fields are required"));
     }
     const user = await User.findOne({$or: [{ email}, {username}]});
     if(user){
-        return res.status(400).json({meaasge : "User with the same Email or Username exist!"});
+      return next(error(400,"User with the same Email or Username exist!"));
     }
     if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 Character!" });
+      return next(error(400,"Password must be at least 6 Character!"));
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -27,11 +29,10 @@ export const signup = async (req, res, next) => {
       const {password,createdAt,updatedAt,__v,...rest} = newuser._doc;
       return res.status(201).json(rest);
     } else {
-      res.status(400).json({ messge: "User not Created!" });
+      return next(error(404,"User not Created!"));
     }
   } catch (error) {
-    console.log(`Error : ${error.message}`);
-    res.status(500).json({ message: "Internal server Eror" });
+    next(error);
   }
 };
 

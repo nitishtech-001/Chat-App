@@ -13,4 +13,15 @@ const port = process.env.PORT;
 app.listen(port,()=>{
     console.log(`App is running at PORT : ${port}`);
     connectDB();
-})
+});
+
+//sending error  to the end user
+app.use((error,req,res,next)=>{
+    const errorStatusCode = error.statusCode || 500;
+    const errorMessage = error.message || "Internal server error";
+    res.status(errorStatusCode).json({
+        success : false,
+        statucCode : errorStatusCode,
+        message : errorMessage
+    });
+});
