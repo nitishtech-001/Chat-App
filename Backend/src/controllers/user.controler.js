@@ -56,3 +56,19 @@ export const updateProfile = async (req, res, next) => {
     console.log(error);
   }
 };
+export const deleteProfile = async (req,res,next)=>{
+  try{
+    if(!mongoose.Types.ObjectId.isValid(req.user.userId) && !mongoose.Types.ObjectId.isValid(req.params.id)){
+      return next(error(402,"User id not valid!"));
+    }
+    if(req.user.userId !== req.params.id){
+      return next(error(403,"You can only Delete your own Profile!"));
+    }
+    res.cookie("access_token", "", { maxAge: 0 });
+    await User.findByIdAndDelete(req.params.id);
+    res.status(200).json({message : "User deleted succesfully!"});
+  }catch(error){
+    console.log(error);
+    next(error);
+  }
+}
