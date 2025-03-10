@@ -2,6 +2,7 @@ import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import error from "../middleware/errorHandler.js";
+import cloudinary from "../lib/cloudinary.js";
 
 
 export const signup = async (req, res, next) => {
@@ -70,4 +71,29 @@ export const login = async (req, res, next) => {
 
 };
 
+export const uploadImage = async (req,res,next)=>{
+  try{
+    if(!req.files || req.files.length === 0){
+      return next(error(401,"Plese provide the Image!"));
+    }
+    else if(req.files.length >10){
+      return next(error(401,"Max 10 file can be uploaded!"));
+    }
+    const folderName = req.body.folderName || "upload";
+    const uploadPromises = req.files.map((file)=>{
+      const base64Image = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+      return cloudinary.uploader.upload(base64Image,{folder:req.body.folder});
+    });
+    
+    // wait for all images to upload
+    const uploadResponse = await Promise.all(uploadPromises);
+    // extracting the image urls
+    const imageUrls = uploadResponse.map((upload)=> upload.secure_url);
+
+    res.status(200).json({imageUrls : imageUrls});
+  }catch(err){
+    console.log("Error uploading Image : ",err.message);
+    next(err);
+  }
+}
 
