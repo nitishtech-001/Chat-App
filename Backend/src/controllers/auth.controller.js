@@ -80,20 +80,50 @@ export const uploadImage = async (req,res,next)=>{
       return next(error(401,"Max 10 file can be uploaded!"));
     }
     const folderName = req.body.folderName || "upload";
+
     const uploadPromises = req.files.map((file)=>{
-      const base64Image = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
-      return cloudinary.uploader.upload(base64Image,{folder:req.body.folder});
+      const fileSizeLimit = 10 * 1024 * 1024; // 10 MB
+      if (file.size > fileSizeLimit) {
+        return Promise.reject(error(401, "File size exceeds the limit!"));
+      }
+      const resourceType = getFileResourceType(file.mimetype);
+      const extension = file.originalname.split('.').pop() || "image";
+      return new Promise((resolve,reject)=>{
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { 
+            folder : folderName, 
+            resource_type : resourceType,
+            use_filename:true,   
+            format : extension
+          },    
+          (err,result)=>{
+            if(err){
+              reject(err);
+            }else{
+              resolve(result.secure_url);
+            }
+          }
+        );
+        uploadStream.end(file.buffer);
+      });
     });
     
     // wait for all images to upload
-    const uploadResponse = await Promise.all(uploadPromises);
-    // extracting the image urls
-    const imageUrls = uploadResponse.map((upload)=> upload.secure_url);
+    const fileUrls = await Promise.all(uploadPromises);
 
-    res.status(200).json({imageUrls : imageUrls});
+    res.status(200).json({folderName : folderName,fileUrls : fileUrls});
   }catch(err){
     console.log("Error uploading Image : ",err.message);
     next(err);
   }
 }
+const getFileResourceType = (mimetype) => {
+  if (mimetype.startsWith("image/")) {
+    return "image";
+  } else if (mimetype.startsWith("video/")) {
+    return "video";
+  } else{
+    return "raw";
+  }
+};
 
