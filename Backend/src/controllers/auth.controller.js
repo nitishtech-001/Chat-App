@@ -71,7 +71,7 @@ export const login = async (req, res, next) => {
 
 };
 
-export const uploadImage = async (req,res,next)=>{
+export const uploadFiles = async (req,res,next)=>{
   try{
     if(!req.files || req.files.length === 0){
       return next(error(401,"Plese provide the Image!"));
