@@ -10,15 +10,15 @@ import cors from 'cors';
 dotenv.config();
 const app = express();
 
+app.use(cors({
+    origin : "http://localhost:5173",
+    credentials : true
+}));
 app.use(express.json()); // allow to distruct the request body
 app.use(cookieParser());
 app.use("/api/auth",authRoutes);
 app.use("/api/user",userRoutes);
 app.use("/api/message",messageRoutes);
-app.use(cors({
-    origin : "http://localhost:5173",
-    credentials : true
-}));
 const port = process.env.PORT;
 app.listen(port,()=>{
     console.log(`App is running at PORT : ${port}`);
