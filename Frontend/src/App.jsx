@@ -8,6 +8,7 @@ import Profile from './pages/Profile';
 import userAuthStatus from './lib/userAuthStatus.js';
 import { useEffect } from 'react';
 import {Loader} from 'lucide-react';
+import {Toaster} from 'react-hot-toast';
 
 function App() {
   const {authUser,checkAuth, isCheckingAuth} = userAuthStatus();
@@ -15,7 +16,7 @@ function App() {
     checkAuth();
   },[checkAuth]);
 
-  console.log(authUser);
+  // console.log(authUser);
   if(isCheckingAuth && !authUser){
    return <div className="flex items-center justify-center h-screen">
       <Loader className="size-20 animate-spin" />
@@ -31,6 +32,8 @@ function App() {
         <Route path="/setting" element={authUser?<Setting />:<Navigate to="/login" />} />
         <Route path="/profile" element={authUser?<Profile />:<Navigate to="/login" />} />
       </Routes>
+
+      <Toaster />
     </>
   )
 }
