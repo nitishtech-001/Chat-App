@@ -72,3 +72,17 @@ export const deleteProfile = async (req,res,next)=>{
     next(error);
   }
 }
+
+export const userAuthCheck = async (req,res,next)=>{
+  if(!mongoose.Types.ObjectId.isValid(req.user.userId)){
+    return next(error(401,"Your object Id is incorrect!"));
+  }
+  try{
+    const user = await User.findById(req.user.userId);
+    const {password,__v,...rest} = user._doc;
+    res.status(200).json(rest);
+  }catch(err){
+    console.log(err);
+    next(err);
+  }
+}
