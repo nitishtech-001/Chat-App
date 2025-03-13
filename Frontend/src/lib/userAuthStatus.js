@@ -63,6 +63,20 @@ const userAuthStatus = create((set) =>({
         }finally{
             set(state=>({isLoggingIn : false}));
         }
+    },
+
+    updateProfile : async (data,userId)=>{
+        set(state=>({isUpdatingProfile : true}));
+        try{
+            const res = await axiosInstance.post(`/user/update-profile/${userId}`,data);
+            set(state=>({authUser:res.data}));
+            toast.success("Account Updated Successfully");
+        }catch(error){
+            toast.error(error.response.data.message);
+            console.log(error);
+        }finally{
+            set(state=>({isUpdatingProfile : false}));
+        }
     }
 }));
 
