@@ -1,7 +1,7 @@
 import React from 'react'
 import userAuthStatus from '../lib/userAuthStatus.js'
 import { Link } from 'react-router-dom';
-import { LogOut, MessageSquare, Settings, User } from 'lucide-react';
+import { AtSignIcon, LogOut, MessageSquare, Settings, User } from 'lucide-react';
 
 export default function Navbar() {
   const {isLoggingOut,logout, authUser} = userAuthStatus();
@@ -23,7 +23,7 @@ export default function Navbar() {
                 <Settings className="size-4"  />
                 <span className="hidden sm:inline">Settings</span>
               </Link>
-              {authUser && (
+              {authUser? (
                 <>
                   <Link to="/profile" className="btn btn-sm gap-2">
                     <User className="size-5" />
@@ -35,7 +35,10 @@ export default function Navbar() {
                     <span className="hidden sm:inline">{isLoggingOut?"Logging Out...":"Logout"}</span>
                   </button>
                 </>
-              )}
+              ):(<Link to="/login" className="btn btn-sm gap-2 transition-colors">
+                <AtSignIcon className="size-4"  />
+                <span className="hidden sm:inline">Sign in</span>
+              </Link>)}
             </div>
           </div>
         </div>
