@@ -10,6 +10,9 @@ const verifyToken = (req,res,next)=>{
             return next(error(401,"Your session is expire."))
         }
         jwt.verify(token,process.env.JWT_SECRET,(error,user)=>{
+            if(error){
+                return res.status(402).json(error.message);
+            }
             req.user = user;
         });
         next();
