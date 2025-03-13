@@ -47,7 +47,7 @@ export const updateProfile = async (req, res, next) => {
             }
         },{new:true}
     );
-    const {password,createdAt,updatedAt,__v,...rest} = updateUser._doc;
+    const {password,__v,...rest} = updateUser._doc;
     res.status(201).json(rest);
   } catch (error) {
     next(error);

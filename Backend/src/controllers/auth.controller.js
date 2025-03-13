@@ -27,7 +27,7 @@ export const signup = async (req, res, next) => {
     if (newuser) {
       generateToken(newuser._id, res);
       await newuser.save();
-      const {password,createdAt,updatedAt,__v,...rest} = newuser._doc;
+      const {password,__v,...rest} = newuser._doc;
       return res.status(201).json(rest);
     } else {
       return next(error(404,"User not Created!"));
@@ -61,6 +61,8 @@ export const login = async (req, res, next) => {
       username : user.username,
       email : user.email,
       avatar : user.avatar,
+      createdAt : user.createdAt,
+      updatedAt : user.updatedAt
     })
   }catch(error){
     console.log("Error : "+error.message);
