@@ -9,8 +9,11 @@ import userAuthStatus from './lib/userAuthStatus.js';
 import { useEffect } from 'react';
 import {Loader} from 'lucide-react';
 import {Toaster} from 'react-hot-toast';
+import useThemeStatus from "./lib/useThemeStatus.js";
+
 
 function App() {
+  const {theme} = useThemeStatus();
   const {authUser,checkAuth, isCheckingAuth} = userAuthStatus();
   useEffect(()=>{
     checkAuth();
@@ -23,7 +26,7 @@ function App() {
     </div>
   }
   return (
-    <>
+    <div data-theme={theme}>
       <Navbar />
       <Routes>
         <Route path="/" element={authUser?<Home />:<Navigate to="/login"/>} />
@@ -34,7 +37,7 @@ function App() {
       </Routes>
 
       <Toaster />
-    </>
+    </div>
   )
 }
 
