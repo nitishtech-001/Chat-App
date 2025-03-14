@@ -9,7 +9,7 @@ const userAuthStatus = create((set) =>({
     isUpdatingProfile : false,
     isLoggingOut : false,
     isCheckingAuth : true,
-
+    onlineUsers : [],
     checkAuth : async ()=>{
         try {
             const res = await axiosInstance.get("/user/check");
@@ -29,8 +29,8 @@ const userAuthStatus = create((set) =>({
             toast.success("Account created successfully!");
             set(state=>({authUser : res.data}));
         } catch (error) {
+            toast.error(error.message);
             console.log(error);
-            toast.error(error.response.data.message);
         }finally{
             set(state=>({isSigningUp : false}));
         }
@@ -58,7 +58,7 @@ const userAuthStatus = create((set) =>({
             set(state=>({authUser : res.data}));
             return toast.success("Logged In Successfully");
         }catch(error){
-            toast.error(error.response.data.message);
+            toast.error(error.message);
             console.log(error);
         }finally{
             set(state=>({isLoggingIn : false}));
@@ -72,7 +72,7 @@ const userAuthStatus = create((set) =>({
             set(state=>({authUser:res.data}));
             toast.success("Account Updated Successfully");
         }catch(error){
-            toast.error(error.response.data.message);
+            toast.error(error.message);
             console.log(error);
         }finally{
             set(state=>({isUpdatingProfile : false}));
