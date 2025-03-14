@@ -13,7 +13,6 @@ export const getUserForSideBar = async (req,res,next)=>{
             return next(error(401,"Session expire try again login!"));
         }
         const loggedUserId = user._id;
-        console.log(loggedUserId);
         const filteredUsers = await User.find(
             {
                 _id : {$ne:loggedUserId}
@@ -76,7 +75,6 @@ export const sendMessage = async (req,res,next)=>{
             if(users[0]._id == myId){
                 return next(error(401,"Receiver does not exist"));
             }else{
-                console.log(users[0]._id)
                 return next(error(401,"Your session is expired"));
             }
         }
