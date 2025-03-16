@@ -82,7 +82,7 @@ export const sendMessage = async (req,res,next)=>{
             senderId : myId,
             receiverId : userToChatId,
             text : text || "",
-            file : file || ""
+            file : file || []
         });
         await message.save();
         // TODO : realtime functionality goes here => socket.io
