@@ -35,12 +35,12 @@ const useChatstatus = create((set,get)=>({
             set({isMessagesLoading : false});
         }
     },
-    // todo : optimize this one later
     subscribeToMessages : ()=>{
         const {selectedUser} = get();
         if(!selectedUser) return ;
         const socketio = userAuthStatus.getState().socket;
         socketio.on("newMessage",(newMessage)=>{
+            if(newMessage.senderId !== selectedUser._id) return ;
             set(state=>({messages : [...state.messages,newMessage]}))
         })
     },

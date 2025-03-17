@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useChatstatus from '../lib/useChatStatus';
 import userAuthStatus from '../lib/userAuthStatus';
 import SidebarSkeleton from './skeleton/SidebarSkeleton';
@@ -7,9 +7,21 @@ import { Search, Users } from 'lucide-react';
 export default function Sidebar() {
   const {users,isUsersLoading,getUsers,setSelectedUser,selectedUser} = useChatstatus();
   const {onlineUsers} = userAuthStatus();
+  const [filterUsers,setFilterUsers] = useState([]);
+  const [toggle,setToggle] = useState(false);
+  const [filterText,setFilterText] = useState("");
   useEffect(()=>{
     getUsers();
   },[getUsers]);
+
+  useEffect(()=>{
+    let sortUsers = toggle?users.filter(user=> onlineUsers.includes(user._id)):users;
+    if(filterText){
+      sortUsers = sortUsers.filter(user => user.username.toLowerCase().includes(filterText.toLowerCase()));
+    }
+    
+    setFilterUsers(sortUsers);
+  },[toggle,filterText]);
 
   if(isUsersLoading) return <SidebarSkeleton  />
   return (
@@ -20,19 +32,26 @@ export default function Sidebar() {
           <span className="font-medium hidden lg:block">Contacts</span>
         </div>
 
-        {/* TODO : Online filter toggle */}
+        <div className="flex items-center gap-1 justify-center lg:justify-end">
+            <input 
+              type="checkbox"
+              onClick={()=>setToggle(!toggle)}
+              className="size-5 rounded-full cursor-pointer"
+              />
+              <span >Online</span>
+              <span className="hidden lg:inline">Friends</span>
+        </div>
 
-        {/* TODO : add search bar */}
-        <div className="hidden gap-2 lg:flex mt-3 items-center px-3 py-1 border border-base-400 rounded-sm">
+        <div className="relative hidden gap-2 lg:flex mt-3 items-center px-3 py-1 border border-base-400 rounded-sm">
           <Search className="size-4" />
-          <input type="text" className="outline-none" />
+          <input type="text" className="outline-none" value={filterText} onChange={(e)=>setFilterText(e.target.value)} />
+          {filterText && <button className="btn size-5 font-semibold hover:bg-red-500" onClick={()=>setFilterText("")}>X</button>}
         </div>
 
       </div>
 
-        {/* Users to show */}
         <div className="overflow-y-auto w-full py-3">
-          {users.map((user)=>(
+          {filterUsers.map((user)=>(
             <button 
             key={user._id}
             onClick={()=>setSelectedUser(user)}

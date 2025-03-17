@@ -86,7 +86,6 @@ export const sendMessage = async (req,res,next)=>{
             file : file || []
         });
         await message.save();
-        // TODO : realtime functionality goes here => socket.io
         const receiverSocketId = getReceiverSocketId(userToChatId);
         if(receiverSocketId){
             socketio.to(receiverSocketId).emit("newMessage",message);
