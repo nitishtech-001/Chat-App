@@ -31,7 +31,7 @@ export default function Sidebar() {
       </div>
 
         {/* Users to show */}
-        <div className="oberflow-y-auto w-full py-3">
+        <div className="overflow-y-auto w-full py-3">
           {users.map((user)=>(
             <button 
             key={user._id}
@@ -44,7 +44,7 @@ export default function Sidebar() {
                 className="size-8 object-cover rounded-full lg:size-12 lg:min-w-12"
                 />
                 {onlineUsers.includes(user._id) && (
-                  <span className="absolute bottom-0 right-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
+                  <span className="size-3 absolute bottom-0 right-0 bg-green-500 rounded-full ring-2 ring-zinc-900" />
                 )}
                 <span className="text-sm lg:hidden truncate max-w-full">{user.username}</span>
               </div>

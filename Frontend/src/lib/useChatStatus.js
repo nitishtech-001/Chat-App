@@ -1,8 +1,9 @@
 import {create} from 'zustand';
 import axiosInstance from "./axios.js";
 import {toast} from 'react-hot-toast';
+import  userAuthStatus  from './userAuthStatus.js';
 
-const useChatstatus = create((set)=>({
+const useChatstatus = create((set,get)=>({
     messages : [],
     users : [],
     selectedUser : null,
@@ -34,7 +35,21 @@ const useChatstatus = create((set)=>({
             set({isMessagesLoading : false});
         }
     },
-    // todo : update this one later
+    // todo : optimize this one later
+    subscribeToMessages : ()=>{
+        const {selectedUser} = get();
+        if(!selectedUser) return ;
+        const socketio = userAuthStatus.getState().socket;
+        socketio.on("newMessage",(newMessage)=>{
+            set(state=>({messages : [...state.messages,newMessage]}))
+        })
+    },
+
+    unsubscribeToMessage : ()=>{
+        const socketio = userAuthStatus.getState().socket;
+        socketio.off("newMessage");
+    },
+
     setSelectedUser : (selectedUser)=>{
         set(state=>({selectedUser : selectedUser}));
     },

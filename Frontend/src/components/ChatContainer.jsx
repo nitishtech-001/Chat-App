@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import useChatStatus from "../lib/useChatStatus";
 import ChatHeader from './ChatHeader';
 import ChatInput from './ChatInput';
@@ -7,11 +7,22 @@ import userAuthStatus from '../lib/userAuthStatus';
 import ChatSelectedFirst from './ChatSelectedFirst';
 
 export default function ChatContainer() {
-  const { messages, getMessages, isMessagesLoading, selectedUser } = useChatStatus();
+  const { messages, getMessages, isMessagesLoading, selectedUser, subscribeToMessages, unsubscribeToMessage } = useChatStatus();
   const { authUser } = userAuthStatus();
+  const messagesEndRef = useRef(null);
+  useEffect(()=>{
+    if(messagesEndRef.current){
+      setTimeout(()=>{
+        messagesEndRef.current.scrollIntoView({behavior:"smooth"});
+      },100);
+    }
+  },[messages]);
+
   useEffect(() => {
       getMessages(selectedUser._id);
-  }, [selectedUser._id, getMessages]);
+      subscribeToMessages();
+      return ()=> unsubscribeToMessage();
+  }, [selectedUser._id, getMessages,subscribeToMessages,unsubscribeToMessage]);
 
   if (isMessagesLoading) return (
     <div className="flex-1 flex flex-col overflow-auto">
@@ -104,6 +115,7 @@ export default function ChatContainer() {
 
           </div>
         ))}
+        <div ref={messagesEndRef}></div>
       </div>
 
       <ChatInput />
