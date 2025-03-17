@@ -104,6 +104,21 @@ const userAuthStatus = create((set,get) =>({
         })
     },
 
+    fireBaseAuth : async (data)=>{
+        set({isLoggingIn:true});
+        try{
+            const res = await axiosInstance.post("/auth/googleLogin",data);
+            set({authUser:res.data});
+            toast.success("Logged in succesfully!");
+            get().connectSocket()
+        }catch(error){
+            toast.error(error.response.data.message);
+            console.log(error);
+        }finally{
+            set({isLoggingIn:false});
+        }
+    },
+
     disconnectSocket : ()=>{
         if(get().socket?.connected) get().socket.disconnect();
     }

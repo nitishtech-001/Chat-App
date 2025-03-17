@@ -4,6 +4,7 @@ import userAuthStatus from '../lib/userAuthStatus';
 import { Link } from 'react-router-dom';
 import AuthImagePattern from '../components/AuthImagePattern';
 import toast from 'react-hot-toast';
+import OAuth from '../components/OAuth';
 export default function Login() {
   const {isLoggingIn,login} = userAuthStatus();
   const [showPassword,setShowPassword] = useState(false);
@@ -101,7 +102,7 @@ export default function Login() {
           </button>
 
         </form>
-            // ADD FIREBASE EMAIL VERIFICATION DIRECTLY
+        <OAuth />
         <div className="text-center">
           <p className="text-base-content/60">
           Don't have an account?{"  "}

@@ -7,7 +7,7 @@ import { Search, Users } from 'lucide-react';
 export default function Sidebar() {
   const {users,isUsersLoading,getUsers,setSelectedUser,selectedUser} = useChatstatus();
   const {onlineUsers} = userAuthStatus();
-  const [filterUsers,setFilterUsers] = useState([]);
+  const [filterUsers,setFilterUsers] = useState(users);
   const [toggle,setToggle] = useState(false);
   const [filterText,setFilterText] = useState("");
   useEffect(()=>{
@@ -21,7 +21,7 @@ export default function Sidebar() {
     }
     
     setFilterUsers(sortUsers);
-  },[toggle,filterText]);
+  },[toggle,filterText,users]);
 
   if(isUsersLoading) return <SidebarSkeleton  />
   return (
