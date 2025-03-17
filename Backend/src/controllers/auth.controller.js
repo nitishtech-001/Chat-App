@@ -129,3 +129,40 @@ const getFileResourceType = (mimetype) => {
   }
 };
 
+export const googleLogin = async (req,res,next)=>{
+  const {email,username,avatar} = req.body;
+  if(!email || !username){
+    return next(error(401,"Provide email and username"));
+  }
+  try{
+    let user = await User.findOne({$or: [{ email}, {username}]});
+    if(!user){
+      const password = email.split("@")[0];
+      const salt = await bcrypt.genSalt(10);
+      const hashPass = await bcrypt.hash(password, salt);
+  
+      const newuser = new User({ username, email, password: hashPass,avatar:avatar });
+  
+      if (newuser) {
+        generateToken(newuser._id, res);
+        await newuser.save();
+        const {password,__v,...rest} = newuser._doc;
+        return res.status(201).json(rest);
+      }
+    } else {
+      generateToken(user._id,res);
+      res.status(200).json({
+        _id : user._id,
+        username : user.username,
+        email : user.email,
+        avatar : user.avatar,
+        createdAt : user.createdAt,
+        updatedAt : user.updatedAt
+      });
+    }
+  }catch(err){
+    next(error(err.message));
+    console.log(err.message);
+  }
+}
+
