@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 import error from "../middleware/errorHandler.js";
+import { getReceiverSocketId, socketio } from "../lib/socketio.js";
 
 export const getUserForSideBar = async (req,res,next)=>{
     try{
@@ -86,6 +87,10 @@ export const sendMessage = async (req,res,next)=>{
         });
         await message.save();
         // TODO : realtime functionality goes here => socket.io
+        const receiverSocketId = getReceiverSocketId(userToChatId);
+        if(receiverSocketId){
+            socketio.to(receiverSocketId).emit("newMessage",message);
+        }
         res.json(message);
     }catch(err){
         console.log("Error message : ",err.message);
