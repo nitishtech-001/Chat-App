@@ -73,9 +73,11 @@ export default function ChatInput() {
       }
       setFormData({...updatedFormData});
     }
-    await sendMessages(selectedUser._id,updatedFormData);
+    const send = await sendMessages(selectedUser._id,updatedFormData);
     clearAll();
-    toast.success("Message send succesfully!");
+    if(send){
+      toast.success("Message send successfully!");
+    }
     setSending(false);
   };
  

@@ -35,17 +35,18 @@ export default function Sidebar() {
         <div className="flex items-center gap-1 justify-center lg:justify-end">
             <input 
               type="checkbox"
-              onClick={()=>setToggle(!toggle)}
+              onChange={()=>setToggle(!toggle)}
+              checked={toggle}
               className="size-5 rounded-full cursor-pointer"
               />
               <span >Online</span>
               <span className="hidden lg:inline">Friends</span>
         </div>
 
-        <div className="relative hidden gap-2 lg:flex mt-3 items-center px-3 py-1 border border-base-400 rounded-sm">
-          <Search className="size-4" />
-          <input type="text" className="outline-none" value={filterText} onChange={(e)=>setFilterText(e.target.value)} />
-          {filterText && <button className="btn size-5 font-semibold hover:bg-red-500" onClick={()=>setFilterText("")}>X</button>}
+        <div className="hidden gap-2 lg:flex mt-3 items-center px-2 py-1 border border-base-400 rounded-sm w-[200px]">
+          <Search className="size-4 min-w-4" />
+          <input type="text" className="outline-none flex-grow max-w-[130px]" value={filterText} onChange={(e)=>setFilterText(e.target.value)} />
+          {filterText && <button className="btn size-6 min-w-6 font-semibold hover:bg-red-500 p-0 m-0" onClick={()=>setFilterText("")}>X</button>}
         </div>
 
       </div>

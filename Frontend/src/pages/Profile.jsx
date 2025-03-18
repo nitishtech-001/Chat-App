@@ -6,8 +6,9 @@ import {Camera, Eye, EyeClosed, Lock, Mail, User} from 'lucide-react';
 
 
 export default function Profile() {
-  const {authUser,isUpdatingProfile,updateProfile} = userAuthStatus();
+  const {authUser,isUpdatingProfile,updateProfile, deleteProfile} = userAuthStatus();
   const [imageUpdate,setImageUpdate] = useState({loading:false,error:""});
+  const [isDeletingProfile,setIsDeletingProfile] = useState(false);
   const [showPassword,setShowPassword] = useState(false);
   const [formData,setFormData] = useState({
     password : "",
@@ -46,6 +47,12 @@ export default function Profile() {
       updateProfile(formData,authUser._id);
       setFormData({...formData,password:""});
     }
+  }
+
+  const handleProfileDelete = async()=>{
+    setIsDeletingProfile(true);
+    await deleteProfile();
+    setIsDeletingProfile(false);
   }
   return (
     <div className="pt-20">
@@ -134,6 +141,15 @@ export default function Profile() {
               <button className="btn uppercase px-4 py-2.5 bg-base-200 rounded-lg border w-full hover:bg-green-500 font-semibold"
               onClick={handleUpdate}>
                 {isUpdatingProfile?"Updating profile...":"Update profile"}
+              </button>
+          </div>
+
+          <div className="space-y-6">
+              <button className="btn uppercase px-4 py-2.5 bg-base-200 rounded-lg border w-full hover:opacity-85 font-semibold bg-red-700"
+              onClick={handleProfileDelete}
+              disabled= {isDeletingProfile}
+              >
+                {isDeletingProfile?"Deleting profile...":"Delete profile"}
               </button>
           </div>
 

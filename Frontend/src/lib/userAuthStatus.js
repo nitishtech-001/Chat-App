@@ -121,6 +121,19 @@ const userAuthStatus = create((set,get) =>({
 
     disconnectSocket : ()=>{
         if(get().socket?.connected) get().socket.disconnect();
+    },
+
+    deleteProfile : async ()=>{
+        const {authUser} = get();
+        try{
+            const res = await axiosInstance.delete(`/user//delete-profile/${authUser._id}`);
+            set({authUser : null});
+            get().disconnectSocket();
+            toast.success(res.data.message);
+        }catch(error){
+            toast.error(error.response.data.message);
+            console.log(error);
+        }
     }
 }));
 

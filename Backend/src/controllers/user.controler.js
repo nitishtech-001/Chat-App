@@ -1,5 +1,6 @@
 import error from "../middleware/errorHandler.js";
 import User from "../models/user.model.js";
+import Message from "../models/message.model.js";
 import mongoose from "mongoose";
 import bcrypt from 'bcryptjs';
 
@@ -62,6 +63,12 @@ export const deleteProfile = async (req,res,next)=>{
     if(req.user.userId !== req.params.id){
       return next(error(403,"You can only Delete your own Profile!"));
     }
+    await Message.deleteMany({
+      $or : [
+        {senderId : req.params.id},
+        {receiverId : req.params.id}
+      ]
+    })
     res.cookie("access_token", "", { maxAge: 0 });
     await User.findByIdAndDelete(req.params.id);
     res.status(200).json({message : "User deleted succesfully!"});

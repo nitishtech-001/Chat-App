@@ -28,6 +28,7 @@ const useChatstatus = create((set,get)=>({
         try {
             const res = await axiosInstance.get(`/message/${userId}`);
             set({messages : res.data});
+            return true;
         } catch (error) {
             toast.error(error.response.data.message);
             console.log(error)
