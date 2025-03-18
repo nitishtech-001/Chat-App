@@ -36,7 +36,7 @@ const userAuthStatus = create((set,get) =>({
             set(state=>({authUser : res.data}));
             get().connectSocket();
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.response.data.message);
             console.log(error);
         }finally{
             set(state=>({isSigningUp : false}));
@@ -67,7 +67,7 @@ const userAuthStatus = create((set,get) =>({
             toast.success("Logged In Successfully");
             get().connectSocket()
         }catch(error){
-            toast.error(error.message);
+            toast.error(error.response.data.message);
             console.log(error);
         }finally{
             set(state=>({isLoggingIn : false}));
@@ -81,7 +81,7 @@ const userAuthStatus = create((set,get) =>({
             set(state=>({authUser:res.data}));
             toast.success("Account Updated Successfully");
         }catch(error){
-            toast.error(error.message);
+            toast.error(error.response.data.message);
             console.log(error);
         }finally{
             set(state=>({isUpdatingProfile : false}));
