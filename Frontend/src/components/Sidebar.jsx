@@ -12,7 +12,7 @@ export default function Sidebar() {
   const [filterText,setFilterText] = useState("");
   useEffect(()=>{
     getUsers();
-  },[getUsers]);
+  },[getUsers,selectedUser]);
 
   useEffect(()=>{
     let sortUsers = toggle?users.filter(user=> onlineUsers.includes(user._id)):users;

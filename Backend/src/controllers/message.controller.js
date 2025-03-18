@@ -14,7 +14,7 @@ export const getUserForSideBar = async (req,res,next)=>{
             return next(error(401,"Session expire try again login!"));
         }
         const loggedUserId = user._id;
-        const filteredUsers = await User.find(
+        let filteredUsers = await User.find(
             {
                 _id : {$ne:loggedUserId}
             }
@@ -22,6 +22,32 @@ export const getUserForSideBar = async (req,res,next)=>{
         if(!filteredUsers){
             return next(error(401,"Other users not found"));
         }
+        // getting the last message date from the mongodb so short the used based on
+        const objLastchatUser = {};
+        const neverChatUser = [];
+        for(let user of filteredUsers){
+            const lastMessage = await Message.findOne({
+                $or: [
+                    { senderId: loggedUserId,receiverId : user._id },
+                    { senderId: user._id, receiverId : loggedUserId }
+                ]
+            })
+            .sort({ updatedAt: -1 })
+            .lean()
+            .exec();
+            if(lastMessage){
+                objLastchatUser[lastMessage.updatedAt] = user;
+            }else{
+                neverChatUser.push(user);
+            }
+        }
+        // sorting the filter user on the basis odf last message
+        const sortedObj = Object.fromEntries(
+            Object.entries(objLastchatUser)
+                .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA)) // Convert to Date and sort
+        );
+        filteredUsers = [...Object.values(sortedObj),...neverChatUser];
+        // const checking that its work or not
         res.status(200).json(filteredUsers);
     }catch(err){
         console.log("Error message : ",err.message);
