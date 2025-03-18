@@ -1,15 +1,17 @@
 import express from 'express';
-import authRoutes from './routes/auth.route.js';
-import userRoutes from './routes/user.route.js';
-import messageRoutes from './routes/message.route.js';
-import { connectDB } from './lib/database.js';
+import authRoutes from './src/routes/auth.route.js';
+import userRoutes from './src/routes/user.route.js';
+import messageRoutes from './src/routes/message.route.js';
+import { connectDB } from './src/lib/database.js';
 import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import { app, server, socketio } from './lib/socketio.js';
+import { app, server} from './src/lib/socketio.js';
+import path from 'path';
 
 dotenv.config();
-app
+const port = process.env.PORT;
+const __dirname = path.resolve();
 
 app.use(cors({
     origin : "http://localhost:5173",
@@ -20,7 +22,16 @@ app.use(cookieParser());
 app.use("/api/auth",authRoutes);
 app.use("/api/user",userRoutes);
 app.use("/api/message",messageRoutes);
-const port = process.env.PORT;
+
+if(process.env.NODE_ENV === "production"){
+    app.use(express.static(path.join(__dirname,"../Frontend/dist")));
+
+    app.get("*",(req,res)=>{
+        res.sendFile(path.join(__dirname,"../Frontend","dist","index.html"))
+    })
+
+}
+
 server.listen(port,()=>{
     console.log(`App is running at PORT : ${port}`);
     connectDB();
