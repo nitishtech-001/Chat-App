@@ -145,7 +145,7 @@ export default function Profile() {
           </div>
 
           <div className="space-y-6">
-              <button className="btn uppercase px-4 py-2.5 bg-base-200 rounded-lg border w-full hover:opacity-85 font-semibold bg-red-700"
+              <button className="btn uppercase px-4 py-2.5 rounded-lg border w-full hover:opacity-85 font-semibold bg-red-700"
               onClick={handleProfileDelete}
               disabled= {isDeletingProfile}
               >
