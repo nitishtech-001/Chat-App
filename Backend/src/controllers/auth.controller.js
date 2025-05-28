@@ -81,7 +81,7 @@ export const uploadFiles = async (req,res,next)=>{
     else if(req.files.length >10){
       return next(error(401,"Max 10 file can be uploaded!"));
     }
-    const folderName = req.body.folderName || "upload";
+    const folderName = "Chat_App/"+req.body.folderName || "upload";
 
     const uploadPromises = req.files.map((file)=>{
       const fileSizeLimit = 10 * 1024 * 1024; // 10 MB
