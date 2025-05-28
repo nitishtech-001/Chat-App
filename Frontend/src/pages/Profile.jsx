@@ -22,7 +22,7 @@ export default function Profile() {
     setImageUpdate({...imageUpdate,loading:true});
     try{
       const imageForm = new FormData();
-      imageForm.append("folderName",authUser.username+"/avatar");
+      imageForm.append("folderName","Chat_App/"+authUser.username+"/avatar");
       imageForm.append("file",file);
       const res =await axiosInstance.post("/auth/upload-file",imageForm,{
         headers : {
